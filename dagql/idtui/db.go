@@ -24,6 +24,7 @@ type DB struct {
 	OutputOf  map[string]map[string]struct{}
 	Children  map[string]map[string]struct{}
 	Intervals map[string]map[time.Time]*progrock.Vertex
+	Logs      map[string]*progrock.VertexLog
 }
 
 func NewDB() *DB {
@@ -38,12 +39,18 @@ func NewDB() *DB {
 		Outputs:   make(map[string]map[string]struct{}),
 		Children:  make(map[string]map[string]struct{}),
 		Intervals: make(map[string]map[time.Time]*progrock.Vertex),
+		Logs:      make(map[string]*progrock.VertexLog),
 	}
 }
 
 var _ progrock.Writer = (*DB)(nil)
 
 func (db *DB) WriteStatus(status *progrock.StatusUpdate) error {
+	for _, l := range status.Logs {
+		if l.Vertex != "" {
+			db.Logs[l.Vertex] = l
+		}
+	}
 	// collect IDs
 	for _, meta := range status.Metas {
 		if meta.Name == "id" {

@@ -35,7 +35,7 @@ func CollectRows(steps []*Step) []*TraceRow {
 type TraceRow struct {
 	Step *Step
 
-	Parent *TraceRow
+	Parent *TraceRow `json:"-"`
 
 	IsRunning bool
 	Chained   bool
